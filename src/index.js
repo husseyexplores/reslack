@@ -1,7 +1,24 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
-// import registerServiceWorker from './registerServiceWorker';
+import { BrowserRouter as Router } from 'react-router-dom'
+import RootContainer from './RootContainer'
+// import registerServiceWorker from './registerServiceWorker'
 
-ReactDOM.render(<App />, document.getElementById('root'))
+function render() {
+  ReactDOM.render(
+    <Router>
+      <RootContainer />
+    </Router>,
+    document.getElementById('root')
+  )
+}
+
+if (module.hot) {
+  module.hot.accept('./RootContainer', () => {
+    setTimeout(render)
+  })
+}
+
+render()
+
 // registerServiceWorker();

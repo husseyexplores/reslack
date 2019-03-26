@@ -27,7 +27,7 @@ yarn-error.log*
 .idea
 notes.md
 .env
-secret.js
+secret*.js
 /build
 /build_*
 _redirects
