@@ -3,47 +3,11 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import firebase from '../../firebase'
 import { Formik } from 'formik'
-import {
-  Grid,
-  Form,
-  Segment,
-  Button,
-  Header,
-  Message,
-  Icon,
-  List,
-} from 'semantic-ui-react'
+import { Grid, Form, Segment, Button, Header, Message, Icon } from 'semantic-ui-react'
 
-import { isValidEmail } from '../../utils/'
+import { isValidEmail, renderFormikErrors } from '../../utils/'
 
-///////////////////////////////////////////////////////////////////////////////
-
-function renderErrors(errors, touched) {
-  const errorMessages = []
-
-  for (const field in errors) {
-    if (touched[field] && errors[field]) {
-      errorMessages.push(errors[field])
-    }
-  }
-
-  const errorOutput =
-    errorMessages.length > 0 ? (
-      <Message error style={{ textAlign: 'left' }}>
-        <h4>Please fix the following errors:</h4>
-        <List>
-          {errorMessages.map((err, idx) => (
-            <List.Item key={idx}>
-              <Icon name="warning" />
-              <List.Content>{err}</List.Content>
-            </List.Item>
-          ))}
-        </List>
-      </Message>
-    ) : null
-
-  return errorOutput
-}
+////////////////////////////////////////////////////////////////////////////////////////
 
 const initialValues = {
   email: '',
@@ -69,11 +33,8 @@ async function handleFormSubmit(
   { setSubmitting, setErrors, setTouched }
 ) {
   try {
-    const signedInUser = await firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
+    await firebase.auth().signInWithEmailAndPassword(email, password)
 
-    console.log(signedInUser)
     setSubmitting(false)
   } catch (err) {
     setSubmitting(false)
@@ -153,9 +114,7 @@ function Login() {
                   />
 
                   <Button
-                    disabled={
-                      isSubmitting || !dirty || Object.keys(errors).length > 0
-                    }
+                    disabled={isSubmitting || !dirty || Object.keys(errors).length > 0}
                     loading={isSubmitting}
                     color="violet"
                     fluid
@@ -165,7 +124,7 @@ function Login() {
                   </Button>
                 </Segment>
 
-                {renderErrors(errors, touched)}
+                {renderFormikErrors(errors, touched)}
               </Form>
             )
           }}
