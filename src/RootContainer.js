@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Switch, Route, withRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { Loader, Dimmer } from 'semantic-ui-react'
-import { configureStore } from './store'
+import store from './store'
 import firebase from './firebase'
 
 import App from './components/App'
@@ -14,8 +14,6 @@ import { setUser } from './actions'
 import 'semantic-ui-css/semantic.min.css'
 
 ///////////////////////////////////////////////////////////////////////
-
-const store = configureStore()
 
 window.firebase = firebase
 
@@ -29,6 +27,8 @@ function RootContainer({ history }) {
       if (signedInUser) {
         history.push('/')
         store.dispatch(setUser(signedInUser))
+      } else {
+        history.push('/login')
       }
 
       console.log({ signedInUser }) // eslint-disable-line

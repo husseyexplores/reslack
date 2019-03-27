@@ -2,14 +2,14 @@ import { createReducer } from '../utils/'
 import { SET_USER } from '../actions/types'
 
 const initialState = {
-  currentUser: {},
+  currentUser: null,
   authenticated: false,
 }
 
 function setUserReducer(state, payload) {
   return {
     ...state,
-    authenticated: payload.authenticated,
+    authenticated: Boolean(payload.currentUser),
     currentUser: payload.currentUser,
   }
 }
