@@ -98,11 +98,13 @@ export default withFormik({
     { setSubmitting, setTouched, setErrors, props: { closeModal } }
   ) => {
     try {
-      const createdChannel = await createNewChannel({
-        channelName,
-        channelDescription,
-      })
-      console.log(createdChannel)
+      const createdChannel = await createNewChannel(
+        channelName.trim(),
+        channelDescription.trim()
+      )
+
+      console.log(createdChannel) // eslint-disable-line no-console
+
       closeModal()
       setSubmitting(false)
     } catch (err) {

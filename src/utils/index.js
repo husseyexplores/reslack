@@ -9,6 +9,8 @@ export {
 export {
   saveUserToDB,
   createNewChannel,
+  createTextMessage,
+  createImageMessage,
   normalizeFirestoreData,
   objectToArray,
   makeSpreadable,

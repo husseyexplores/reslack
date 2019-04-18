@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Grid } from 'semantic-ui-react'
+import { Grid, Loader, Dimmer } from 'semantic-ui-react'
 import { connect } from 'react-redux'
+import setupFirebaseListeners from '../firebaseListeners'
 import './App.css'
 
 import ColorPanel from './ColorPanel'
@@ -16,39 +17,68 @@ function mapState(state) {
   return {
     currentUser: state.auth.currentUser || {},
     authenticated: state.auth.authenticated,
+    messagesLoaded: state.status.messagesLoaded,
+    channelsList: state.channels.channelsList,
+    channelsLoaded: state.status.channelsLoaded,
+    authLoaded: !!state.auth.currentUser && !!state.auth.authenticated,
   }
 }
 
 // Component
-function App({ currentUser, dispatch }) {
-  return (
-    <>
-      <ModalManager />
+class App extends Component {
+  componentDidMount() {
+    this.unsubscribeFirebaseListeners = setupFirebaseListeners()
+  }
 
-      <Grid columns="equal" className="app" style={{ background: '#eee' }}>
-        <ColorPanel />
-        <SidePanel currentUser={currentUser} dispatch={dispatch} />
-        <Grid.Column style={{ marginLeft: 320 }}>
-          <Messages />
-        </Grid.Column>
+  componentWillUnmount() {
+    this.unsubscribeFirebaseListeners()
+  }
 
-        <Grid.Column width={4}>
-          <MetaPanel />
-        </Grid.Column>
-      </Grid>
-    </>
-  )
+  render() {
+    const { currentUser, dispatch, messagesLoaded, authLoaded } = this.props
+
+    if (!authLoaded) {
+      return (
+        <Dimmer active inverted>
+          <Loader size="large">Loading settings...</Loader>
+        </Dimmer>
+      )
+    }
+
+    return (
+      <>
+        <ModalManager />
+
+        <Grid columns="equal" className="app" style={{ background: '#eee' }}>
+          <ColorPanel />
+          <SidePanel currentUser={currentUser} dispatch={dispatch} />
+          <Grid.Column style={{ marginLeft: 320 }}>
+            {messagesLoaded ? <Messages /> : <Loader active />}
+          </Grid.Column>
+
+          <Grid.Column width={4}>
+            <MetaPanel />
+          </Grid.Column>
+        </Grid>
+      </>
+    )
+  }
 }
 
 App.propTypes = {
   dispatch: PropTypes.func.isRequired,
   currentUser: PropTypes.object.isRequired,
   authenticated: PropTypes.bool.isRequired,
+  messagesLoaded: PropTypes.bool.isRequired,
+  authLoaded: PropTypes.bool.isRequired,
+  channelsLoaded: PropTypes.bool.isRequired,
 }
 
 App.defaultProps = {
   currentUser: {},
   authenticated: false,
+  messagesLoaded: false,
+  channelsLoaded: false,
 }
 
 export default connect(mapState)(App)

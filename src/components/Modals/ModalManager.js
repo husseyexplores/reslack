@@ -3,11 +3,13 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
 import ChannelFormModal from './ChannelFormModal'
+import FileUploadModal from './FileUploadModal'
 
 /////////////////////////////////////////////////////////////////////////////////
 
 const modalMap = {
   ChannelFormModal,
+  FileUploadModal,
 }
 
 function mapState(state) {

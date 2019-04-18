@@ -13,6 +13,7 @@ import store from '../store'
 const db = firebase.database()
 const usersRef = db.ref('users')
 const channelsRef = db.ref('channels')
+const messagesRef = db.ref('messages')
 
 /**
  *
@@ -35,7 +36,7 @@ export async function saveUserToDB(createdUser) {
  * @param {string} values.channelName
  * @param {string} values.channelDescription
  */
-export async function createNewChannel({ channelName, channelDescription } = {}) {
+export async function createNewChannel(channelName, channelDescription) {
   if (!channelName || !channelDescription)
     throw new Error(
       'Invalid `Channel Form` values. Expects `channelName` and `channelDescription` properties. '
@@ -61,6 +62,82 @@ export async function createNewChannel({ channelName, channelDescription } = {})
     channelsRef.child(key).update(newChannel)
   } catch (error) {
     throw new Error(error)
+  }
+}
+
+/**
+ *
+ * @param {string} message - Message to create
+ * @param {string} channelId - Channel ID
+ * @param {Object} user - User object that created the channel
+ * @param {string} user.uid - User's unique ID
+ * @param {string} user.username - User's username
+ * @param {string} user.avatar - User's avatar
+ */
+export async function createTextMessage(
+  message,
+  channelId,
+  user = store.getState().auth.currentUser
+) {
+  if (!message) throw new Error('Can not create an empty message.')
+  if (!channelId)
+    throw new Error('Please specify a channel ID in which to create the message.')
+
+  const newMessage = {
+    content: message,
+    createdAt: firebase.database.ServerValue.TIMESTAMP,
+    user: {
+      uid: user.uid,
+      username: user.username,
+      avatar: user.avatar,
+    },
+  }
+
+  try {
+    await messagesRef
+      .child(channelId)
+      .push()
+      .set(newMessage)
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+/**
+ *
+ * @param {string} imageURL - Image URL
+ * @param {string} channelId - Channel ID
+ * @param {Object} user - User object that created the channel
+ * @param {string} user.uid - User's unique ID
+ * @param {string} user.username - User's username
+ * @param {string} user.avatar - User's avatar
+ */
+export async function createImageMessage(
+  imageURL,
+  channelId,
+  user = store.getState().auth.currentUser
+) {
+  if (!imageURL) throw new Error('Can not create an empty image message.')
+  if (!channelId)
+    throw new Error('Please specify a channel ID in which to create the message.')
+
+  const newMessage = {
+    imageURL: imageURL,
+    createdAt: firebase.database.ServerValue.TIMESTAMP,
+    user: {
+      uid: user.uid,
+      username: user.username,
+      avatar: user.avatar,
+    },
+  }
+
+  try {
+    await messagesRef
+      .child(channelId)
+      .push()
+      .set(newMessage)
+  } catch (e) {
+    throw new Error(e)
   }
 }
 

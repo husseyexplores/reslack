@@ -38,7 +38,7 @@ function RootContainer({ history }) {
   if (!isAuthReady) {
     return (
       <Dimmer active inverted>
-        <Loader size="large">Loading</Loader>
+        <Loader size="large">Initializing App...</Loader>
       </Dimmer>
     )
   }

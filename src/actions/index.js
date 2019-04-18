@@ -78,24 +78,82 @@ export function logoutUser({ onSuccess = () => {}, onError = () => {} } = {}) {
   }
 }
 
-/* ASYNC ACTIONS LOADING STATES */
+/* ALL USERS ACTIONS */
 
-export function asyncActionStart() {
+export function addOnlineUser(user) {
+  if (!user) throw new Error('Please provide a user')
   return {
-    type: actionTypes.ASYNC_START,
+    type: actionTypes.USER_ONLINE,
+    payload: { user },
   }
 }
 
-export function asyncActionFinish() {
+export function OfflineUser(user) {
+  if (!user) throw new Error('Please provide a user')
   return {
+    type: actionTypes.USER_OFFLINE,
+    payload: { user },
+  }
+}
+
+export function addAvailableUser(user) {
+  if (!user) throw new Error('Please provide a user')
+  return {
+    type: actionTypes.ADD_USER,
+    payload: { user },
+  }
+}
+
+export function removeAvailableUser(user) {
+  if (!user) throw new Error('Please provide a user')
+  return {
+    type: actionTypes.REMOVE_USER,
+    payload: { user },
+  }
+}
+
+/* ASYNC ACTIONS LOADING STATES */
+
+export function asyncActionStart(flag) {
+  const action = {
+    type: actionTypes.ASYNC_START,
+  }
+
+  if (flag) {
+    action.payload = { [action[flag]]: true }
+  }
+
+  return action
+}
+
+export function asyncActionFinish(flag) {
+  const action = {
     type: actionTypes.ASYNC_FINISH,
   }
+
+  if (flag) {
+    action.payload = { [action[flag]]: false }
+  }
+
+  return action
 }
 
 export function asyncActionError(error) {
   return {
     type: actionTypes.ASYNC_ERROR,
     error,
+  }
+}
+
+export function setLoadingFlag(key, status) {
+  if (!key === undefined || !status === undefined)
+    throw new Error('Missing arguments in `setLoadingFlag` action')
+
+  return {
+    type: actionTypes.ASYNC_SET_FLAG,
+    payload: {
+      [key]: Boolean(status),
+    },
   }
 }
 
@@ -178,4 +236,11 @@ export function clearChannel(channel) {
 
 export function clearAllChannels() {
   return { type: actionTypes.CLEAR_CHANNELS }
+}
+
+export function addMessage(channelId, message) {
+  return {
+    type: actionTypes.ADD_MESSAGE,
+    payload: { channelId, message },
+  }
 }

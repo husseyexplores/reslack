@@ -6,7 +6,9 @@ import 'firebase/storage'
 import { firebaseConfig } from './secrets'
 
 firebase.initializeApp(firebaseConfig)
-firebase.auth()
-firebase.database()
 
 export default firebase
+window.db = firebase.database()
+export const db = firebase.database()
+export const auth = firebase.auth()
+export const storage = firebase.storage()
