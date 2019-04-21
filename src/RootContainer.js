@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Switch, Route, withRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
-import { Loader, Dimmer } from 'semantic-ui-react'
+
 import store from './store'
 import firebase from './firebase'
+
+import { Spinner } from './common/components'
 
 import App from './components/App'
 import { Login, Register } from './components/Auth'
@@ -19,6 +21,7 @@ window.firebase = firebase
 
 function RootContainer({ history }) {
   const [isAuthReady, setIsAuthReady] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(signedInUser => {
@@ -26,9 +29,13 @@ function RootContainer({ history }) {
 
       if (signedInUser) {
         history.push('/')
-        store.dispatch(setUser(signedInUser))
+        const action = setUser(signedInUser)
+        store.dispatch(action)
+        const _currentUser = action.payload.currentUser
+        setCurrentUser(_currentUser)
       } else {
         history.push('/login')
+        setCurrentUser(null)
       }
 
       console.log({ signedInUser }) // eslint-disable-line
@@ -36,17 +43,19 @@ function RootContainer({ history }) {
   }, [history])
 
   if (!isAuthReady) {
-    return (
-      <Dimmer active inverted>
-        <Loader size="large">Initializing App...</Loader>
-      </Dimmer>
-    )
+    return <Spinner dimmer text="Initializing App..." />
   }
 
   return (
     <Provider store={store}>
       <Switch>
-        <Route path="/" exact component={App} />
+        <Route
+          path="/"
+          exact
+          render={() =>
+            currentUser ? <App /> : <Spinner dimmer text="Preparing chat..." />
+          }
+        />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
       </Switch>

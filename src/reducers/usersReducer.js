@@ -1,8 +1,15 @@
+import omit from 'lodash/omit'
 import { createReducer } from '../utils'
-import { USER_ONLINE, USER_OFFLINE, ADD_USER, REMOVE_USER } from '../actions/types'
+import {
+  USER_ONLINE,
+  USER_OFFLINE,
+  ADD_USER,
+  REMOVE_USER,
+  RESET_USERS,
+} from '../actions/types'
 
 const initialState = {
-  onlineUsersList: [],
+  onlineUsersMap: {},
   allUsersList: [],
 }
 
@@ -27,25 +34,22 @@ function removeUserFromListReducer(state, { user }) {
   }
 }
 
-function setUserOnlineReducer(state, { user }) {
+function setUserOnlineReducer(state, { userId }) {
   return {
     ...state,
-    onlineUsersList: [...state.onlineUsersList, user],
+    onlineUsersMap: { ...state.onlineUsersMap, [userId]: true },
   }
 }
 
-function setUserOfflineReducer(state, { user }) {
-  let userId
-  if (typeof user === 'object' && user.id) {
-    userId = user.id
-  } else if (typeof user.id === 'string') {
-    userId = user
-  }
-
+function setUserOfflineReducer(state, { userId }) {
   return {
     ...state,
-    onlineUsersList: state.onlineUsersList.filter(oldUsers => oldUsers.id !== userId),
+    onlineUsersMap: omit(state.onlineUsersMap, userId),
   }
+}
+
+function resetUsersReducer() {
+  return initialState
 }
 
 export default createReducer(initialState, {
@@ -53,4 +57,5 @@ export default createReducer(initialState, {
   [USER_OFFLINE]: setUserOfflineReducer,
   [ADD_USER]: addUserToListReducer,
   [REMOVE_USER]: removeUserFromListReducer,
+  [RESET_USERS]: resetUsersReducer,
 })

@@ -1,5 +1,5 @@
 import { createReducer } from '../utils/'
-import { ADD_MESSAGE, REMOVE_MESSAGE } from '../actions/types'
+import { ADD_MESSAGE, REMOVE_MESSAGE, RESET_MESSAGES } from '../actions/types'
 
 const initialState = {}
 
@@ -27,7 +27,12 @@ function removeMessageReducer(state, { channelId, messageId }) {
   return newState
 }
 
+function resetMessagesReducer() {
+  return initialState
+}
+
 export default createReducer(initialState, {
   [ADD_MESSAGE]: addMessageReducer,
   [REMOVE_MESSAGE]: removeMessageReducer,
+  [RESET_MESSAGES]: resetMessagesReducer,
 })

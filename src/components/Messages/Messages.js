@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Segment, Comment, Loader, Header, Button, Icon, Ref } from 'semantic-ui-react'
+import { Segment, Comment, Header, Button, Icon, Ref } from 'semantic-ui-react'
 
 import MessageHeader from './MessageHeader'
 import MessageForm from './MessageForm'
@@ -21,6 +21,14 @@ function noMessagesFound(handleClearQuery) {
           Clear Query
         </Button>
       </Segment.Inline>
+    </Segment>
+  )
+}
+
+function noMessagesYet() {
+  return (
+    <Segment placeholder basic textAlign="center">
+      <Header>{`No messages found.`}</Header>
     </Segment>
   )
 }
@@ -87,6 +95,8 @@ function Messages({ currentChannel, currentUser, messages, dispatch }) {
           <Comment.Group className="messages">
             {searchTerm.length > 0 && filteredMessages.length === 0
               ? noMessagesFound(() => setSearchTerm(''))
+              : filteredMessages.length === 0
+              ? noMessagesYet()
               : renderMessages(filteredMessages, currentUser)}
           </Comment.Group>
         </Ref>

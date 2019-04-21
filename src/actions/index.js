@@ -18,13 +18,13 @@ export function setUser(user) {
     _user.avatar = user.photoURL
     _user.username = user.displayName
   }
-
-  return {
+  const action = {
     type: actionTypes.SET_USER,
     payload: {
       currentUser: user ? _user : null,
     },
   }
+  return action
 }
 
 /**
@@ -66,10 +66,16 @@ export function logoutUser({ onSuccess = () => {}, onError = () => {} } = {}) {
   return async dispatch => {
     try {
       dispatch(asyncActionStart())
-      const signedInUser = await firebase.auth().signOut()
+      const signedInUserId = firebase.auth().getUid()
+      await firebase.auth().signOut()
       dispatch(setUser(null))
       dispatch(asyncActionFinish())
-      onSuccess(signedInUser)
+      onSuccess(signedInUserId)
+      await firebase
+        .database()
+        .ref('/presence')
+        .child(signedInUserId)
+        .remove()
     } catch (error) {
       console.log('Error singing in.') // eslint-disable-line
       dispatch(asyncActionError(error.message))
@@ -81,18 +87,34 @@ export function logoutUser({ onSuccess = () => {}, onError = () => {} } = {}) {
 /* ALL USERS ACTIONS */
 
 export function addOnlineUser(user) {
-  if (!user) throw new Error('Please provide a user')
+  let userId
+  if (typeof user === 'object' && user.id) {
+    userId = user.id
+  } else if (typeof user === 'string') {
+    userId = user
+  } else {
+    throw new Error('Please provide a valid userId in `addOnlineUser` action creator')
+  }
+
   return {
     type: actionTypes.USER_ONLINE,
-    payload: { user },
+    payload: { userId },
   }
 }
 
-export function OfflineUser(user) {
-  if (!user) throw new Error('Please provide a user')
+export function removeOnlineUser(user) {
+  let userId
+  if (typeof user === 'object' && user.id) {
+    userId = user.id
+  } else if (typeof user === 'string') {
+    userId = user
+  } else {
+    throw new Error('Please provide a valid userId in `addOnlineUser` action creator')
+  }
+
   return {
     type: actionTypes.USER_OFFLINE,
-    payload: { user },
+    payload: { userId },
   }
 }
 
@@ -110,6 +132,10 @@ export function removeAvailableUser(user) {
     type: actionTypes.REMOVE_USER,
     payload: { user },
   }
+}
+
+export function resetAllUsers() {
+  return { type: actionTypes.RESET_USERS }
 }
 
 /* ASYNC ACTIONS LOADING STATES */
@@ -155,6 +181,10 @@ export function setLoadingFlag(key, status) {
       [key]: Boolean(status),
     },
   }
+}
+
+export function resetAsyncStatuses() {
+  return { type: actionTypes.RESET_ASYNC }
 }
 
 /* MODAL ACTIONS */
@@ -234,13 +264,19 @@ export function clearChannel(channel) {
   }
 }
 
-export function clearAllChannels() {
-  return { type: actionTypes.CLEAR_CHANNELS }
+export function resetAllChannels() {
+  return { type: actionTypes.RESET_CHANNELS }
 }
+
+/* MESSAGES ACTIONS */
 
 export function addMessage(channelId, message) {
   return {
     type: actionTypes.ADD_MESSAGE,
     payload: { channelId, message },
   }
+}
+
+export function resetAllMessages() {
+  return { type: actionTypes.RESET_MESSAGES }
 }

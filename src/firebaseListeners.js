@@ -8,6 +8,11 @@ import {
   setLoadingFlag,
   addAvailableUser,
   addOnlineUser,
+  removeOnlineUser,
+  resetAllChannels,
+  resetAllMessages,
+  resetAllUsers,
+  resetAsyncStatuses,
 } from './actions'
 
 const { getState, dispatch } = store
@@ -74,16 +79,70 @@ function subscribeToUsers() {
   }
 }
 
+function updateOnlinePresence() {
+  const connectRefPath = '.info/connected'
+  const presenceRefPath = '/presence'
+
+  if (!refPaths[connectRefPath]) {
+    refPaths[connectRefPath] = true
+
+    const connectedRef = db.ref(connectRefPath)
+    const presenceRef = db.ref(presenceRefPath)
+    const { currentUser } = getState().auth
+
+    connectedRef.on('value', snap => {
+      if (snap.val() === true) {
+        dispatch(addOnlineUser(currentUser.uid))
+        const ref = presenceRef.child(currentUser.uid)
+        ref.set(true)
+        ref.onDisconnect().remove()
+      } else {
+        dispatch(removeOnlineUser(currentUser.uid))
+      }
+    })
+  }
+}
+
+function subscribeToOnlineUsers() {
+  const path = '/presence'
+
+  if (!refPaths[path]) {
+    refPaths[path] = true
+    const presenceRef = db.ref(path)
+
+    presenceRef.on('child_added', snap => {
+      const userId = snap.key
+      dispatch(addOnlineUser(userId))
+    })
+
+    presenceRef.on('child_removed', snap => {
+      const userId = snap.key
+      dispatch(removeOnlineUser(userId))
+    })
+  }
+}
+
 function cleanupListeners() {
   const paths = Object.keys(refPaths)
   paths.forEach(path => {
     db.ref(path).off()
+    refPaths[path] = false
   })
+
+  const resetActionCreators = [
+    resetAllChannels,
+    resetAllMessages,
+    resetAllUsers,
+    resetAsyncStatuses,
+  ]
+  resetActionCreators.forEach(actionCreator => dispatch(actionCreator()))
 }
 
 function setupFirebaseListeners() {
   subscribeToChannelsAndMessages()
   subscribeToUsers()
+  subscribeToOnlineUsers()
+  updateOnlinePresence()
 
   console.log(
     '%cSubscribed to Firebase Database!',

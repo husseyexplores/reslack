@@ -3,88 +3,79 @@
 // 2 - error
 
 module.exports = {
-  "extends": ["eslint:recommended", "plugin:react/recommended", "prettier"],
-  "parser": "babel-eslint",
-  "parserOptions": {
-    "ecmaVersion": 2018,
-    "sourceType": "module",
-    "ecmaFeatures": {
-        "jsx": true
-    }
+  extends: ['eslint:recommended', 'plugin:react/recommended', 'prettier'],
+  parser: 'babel-eslint',
+  parserOptions: {
+    ecmaVersion: 2018,
+    sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
   },
-  "plugins": [
-    "react",
-    "jsx-a11y",
-    "import",
-    "prettier",
-    "html",
-    "react-hooks"
-  ],
-  "rules": {
-    "react/prop-types": [1],
-    "semi": [0, "never"],
-    "linebreak-style": 1,
-    "prettier/prettier": [
+  plugins: ['react', 'jsx-a11y', 'import', 'prettier', 'html', 'react-hooks'],
+  rules: {
+    'react/prop-types': [1],
+    semi: [0, 'never'],
+    'linebreak-style': 1,
+    'prettier/prettier': [
       1,
       {
-        "trailingComma": "es5",
-        "singleQuote": true,
-        "printWidth": 90,
-        "semi": false,
-        "endOfLine": "lf",
-      }
+        trailingComma: 'es5',
+        singleQuote: true,
+        printWidth: 90,
+        semi: false,
+        endOfLine: 'lf',
+      },
     ],
-    "no-console": 1,
-    "no-unused-vars": [
+    'no-console': 1,
+    'no-unused-vars': [
       1,
       {
-        "ignoreSiblings": true,
-        "argsIgnorePattern": "res|next|^err"
-      }
+        ignoreSiblings: true,
+        argsIgnorePattern: 'res|next|^err',
+      },
     ],
-    "prefer-const": [
-      "warn",
+    'prefer-const': [
+      'warn',
       {
-        "destructuring": "all",
-      }
+        destructuring: 'all',
+      },
     ],
-    "no-return-assign": [
-      2,
-      "except-parens"
-    ],
-    "quotes": [
+    'no-return-assign': [2, 'except-parens'],
+    quotes: [
       1,
-      "single",
+      'single',
       {
-        "avoidEscape": true,
-        "allowTemplateLiterals": true
-      }
+        avoidEscape: true,
+        allowTemplateLiterals: true,
+      },
     ],
-    "react/jsx-filename-extension": [1, {
-      "extensions": [".js", ".jsx"]
-    }],
-    "no-param-reassign": [
+    'react/jsx-filename-extension': [
       1,
       {
-        "props": false
-      }
+        extensions: ['.js', '.jsx'],
+      },
     ],
-    "jsx-a11y/href-no-hash": 0,
-    "jsx-a11y/anchor-is-valid": [
+    'no-param-reassign': [
       1,
       {
-        "aspects": [
-          "invalidHref"
-        ]
-      }
+        props: false,
+      },
     ],
-    "react-hooks/rules-of-hooks": 1,
-    "react-hooks/exhaustive-deps": 1,
+    'jsx-a11y/href-no-hash': 0,
+    'jsx-a11y/anchor-is-valid': [
+      1,
+      {
+        aspects: ['invalidHref'],
+      },
+    ],
+    'react-hooks/rules-of-hooks': 1,
+    'react-hooks/exhaustive-deps': 1,
   },
-  "env": {
-    "es6": true,
-    "browser": true,
-    "node": true,
-    "jasmine": true
-  }
+  env: {
+    es6: true,
+    browser: true,
+    node: true,
+    jasmine: true,
+  },
 }

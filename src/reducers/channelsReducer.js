@@ -4,9 +4,9 @@ import { createReducer } from '../utils/'
 import {
   SET_CHANNEL,
   CLEAR_CHANNEL,
-  CLEAR_CHANNELS,
   UPDATE_CHANNEL,
   SET_CHANNELS,
+  RESET_CHANNELS,
 } from '../actions/types'
 
 const initialState = {
@@ -56,8 +56,8 @@ function clearChannelReducer(state, payload) {
   }
 }
 
-function clearChannelsReducer() {
-  return { ...initialState }
+function resetChannelsReducer() {
+  return initialState
 }
 
 export default createReducer(initialState, {
@@ -65,5 +65,5 @@ export default createReducer(initialState, {
   [SET_CHANNELS]: setChannelsReducer,
   [UPDATE_CHANNEL]: updateChannelReducer,
   [CLEAR_CHANNEL]: clearChannelReducer,
-  [CLEAR_CHANNELS]: clearChannelsReducer,
+  [RESET_CHANNELS]: resetChannelsReducer,
 })
