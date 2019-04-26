@@ -1,7 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
-import { Menu, Icon, Loader } from 'semantic-ui-react'
+import { Menu, Icon } from 'semantic-ui-react'
+
+import { setCurrentChannel } from '../../actions'
 
 /////////////////////////////////////////////////////////////////////////////////////
 
@@ -9,11 +11,19 @@ function mapState(state) {
   return {
     allUsersList: state.users.allUsersList,
     onlineUsersMap: state.users.onlineUsersMap,
+    currentUser: state.auth.currentUser,
   }
 }
 
+const mapDispatch = { setCurrentChannel }
 
-function DirectMessages({ allUsersList, onlineUsersMap }) {
+// Component
+function DirectMessages({
+  currentUser,
+  allUsersList,
+  onlineUsersMap,
+  setCurrentChannel,
+}) {
   function isOnline(userId) {
     return Boolean(onlineUsersMap[userId])
   }
@@ -23,7 +33,11 @@ function DirectMessages({ allUsersList, onlineUsersMap }) {
     if (!users || users.length === 0) return null
 
     return users.map(_user => (
-      <Menu.Item key={_user.uid} style={{ opacity: 0.7 }} onClick={() => {}}>
+      <Menu.Item
+        key={_user.uid}
+        style={{ opacity: 0.7 }}
+        onClick={() => (_user.uid !== currentUser.uid ? setCurrentChannel(_user) : null)}
+      >
         <Icon name="circle" color={isOnline(_user.uid) ? 'green' : 'grey'} />
         {'@ ' + _user.displayName}
       </Menu.Item>
@@ -49,6 +63,7 @@ DirectMessages.propTypes = {
   currentUser: PropTypes.object.isRequired,
   allUsersList: PropTypes.array.isRequired,
   onlineUsersMap: PropTypes.object.isRequired,
+  setCurrentChannel: PropTypes.func.isRequired,
 }
 
 DirectMessages.defaultProps = {
@@ -56,4 +71,7 @@ DirectMessages.defaultProps = {
   onlineUsersMap: {},
 }
 
-export default connect(mapState)(DirectMessages)
+export default connect(
+  mapState,
+  mapDispatch
+)(DirectMessages)

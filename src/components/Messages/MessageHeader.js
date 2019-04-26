@@ -10,7 +10,13 @@ function displayUserCount(usersCount) {
 }
 
 // Component
-function MessageHeader({ channelName, setSearchTerm, searchTerm, usersCount }) {
+function MessageHeader({
+  channelName,
+  setSearchTerm,
+  searchTerm,
+  usersCount,
+  isPrivateChannel,
+}) {
   return (
     <Segment clearing>
       {/* Channel Title */}
@@ -19,7 +25,9 @@ function MessageHeader({ channelName, setSearchTerm, searchTerm, usersCount }) {
           {channelName}
           <Icon name="star outline" color="black" />
         </span>
-        <Header.Subheader>{displayUserCount(usersCount)}</Header.Subheader>
+        {!isPrivateChannel && (
+          <Header.Subheader>{displayUserCount(usersCount)}</Header.Subheader>
+        )}
       </Header>
 
       {/* Search Input */}
@@ -42,6 +50,7 @@ MessageHeader.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   setSearchTerm: PropTypes.func.isRequired,
   usersCount: PropTypes.number.isRequired,
+  isPrivateChannel: PropTypes.bool.isRequired,
 }
 
 MessageHeader.defaultProps = {

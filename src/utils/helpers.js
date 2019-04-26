@@ -1,3 +1,6 @@
+import { sortBy } from 'lodash'
+import { throws } from 'assert'
+
 export function createReducer(initialState, fnMap) {
   return (state = initialState, { type, payload = {} }) => {
     const handler = fnMap[type]
@@ -39,4 +42,16 @@ export function getFocusedElement() {
 
 export function isValidEmail(email) {
   return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)
+}
+
+// Channel Id Extractor
+export function getChannelId(isPrivateChannel, currentUser, currentChannel) {
+  ;[...arguments].map((arg, i) => {
+    if (arg === undefined)
+      throw new Error(`Missing arg #${i + 1} in "getChannelId" function`)
+  })
+
+  return isPrivateChannel
+    ? sortBy([currentUser.uid, currentChannel.uid]).join('_')
+    : currentChannel.id
 }

@@ -7,6 +7,7 @@ import {
   addMessage,
   setLoadingFlag,
   addAvailableUser,
+  updateAvailableUser,
   addOnlineUser,
   removeOnlineUser,
   resetAllChannels,
@@ -20,6 +21,7 @@ const { getState, dispatch } = store
 const refPaths = {}
 window.refPaths = refPaths
 
+// PUBLIC CHANNELS
 function subscribeToChannelsAndMessages() {
   const path = '/channels'
 
@@ -41,8 +43,8 @@ function subscribeToChannelsAndMessages() {
       channelsList.forEach(channel => {
         const channelMessagesPath = `/messages/${channel.id}`
         if (!refPaths[channelMessagesPath]) {
-          db.ref(channelMessagesPath).on('child_added', messageSnap => {
-            const newMessage = { id: messageSnap.key, ...messageSnap.val() }
+          db.ref(channelMessagesPath).on('child_added', msgSnap => {
+            const newMessage = { id: msgSnap.key, ...msgSnap.val() }
             dispatch(addMessage(channel.id, newMessage))
 
             if (!refPaths[channelMessagesPath]) {
@@ -58,6 +60,27 @@ function subscribeToChannelsAndMessages() {
   }
 }
 
+// PRIVATE CHANNELS
+function subscribeToPrivateChannelsAndMessages() {
+  const channelsPath = `/pms/${getState().auth.currentUser.uid}`
+  if (!refPaths[channelsPath]) {
+    refPaths[channelsPath] = true
+
+    db.ref(channelsPath).on('child_added', snap => {
+      const pvtChannelId = snap.key
+      const privateMsgChannelPath = `/pm/${pvtChannelId}`
+      if (!refPaths[privateMsgChannelPath]) {
+        refPaths[privateMsgChannelPath] = true
+        db.ref(privateMsgChannelPath).on('child_added', msgSnap => {
+          const newMessage = { id: msgSnap.key, ...msgSnap.val() }
+          dispatch(addMessage(snap.key, newMessage))
+        })
+      }
+    })
+  }
+}
+
+// ALL USERS
 function subscribeToUsers() {
   const path = '/users'
 
@@ -76,9 +99,15 @@ function subscribeToUsers() {
         }
       }
     })
+
+    db.ref(path).on('child_changed', snap => {
+      const user = { uid: snap.key, ...snap.val() }
+      dispatch(updateAvailableUser(user))
+    })
   }
 }
 
+// ONLINE USERS
 function updateOnlinePresence() {
   const connectRefPath = '.info/connected'
   const presenceRefPath = '/presence'
@@ -98,6 +127,7 @@ function updateOnlinePresence() {
         ref.onDisconnect().remove()
       } else {
         dispatch(removeOnlineUser(currentUser.uid))
+        presenceRef.child(currentUser.uid).remove()
       }
     })
   }
@@ -122,6 +152,7 @@ function subscribeToOnlineUsers() {
   }
 }
 
+// CLEANUP LISTENERS
 function cleanupListeners() {
   const paths = Object.keys(refPaths)
   paths.forEach(path => {
@@ -139,10 +170,11 @@ function cleanupListeners() {
 }
 
 function setupFirebaseListeners() {
-  subscribeToChannelsAndMessages()
   subscribeToUsers()
   subscribeToOnlineUsers()
   updateOnlinePresence()
+  subscribeToChannelsAndMessages()
+  subscribeToPrivateChannelsAndMessages()
 
   console.log(
     '%cSubscribed to Firebase Database!',

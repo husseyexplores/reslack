@@ -126,6 +126,14 @@ export function addAvailableUser(user) {
   }
 }
 
+export function updateAvailableUser(user) {
+  if (!user) throw new Error('Please provide a user')
+  return {
+    type: actionTypes.UPDATE_USER,
+    payload: { user },
+  }
+}
+
 export function removeAvailableUser(user) {
   if (!user) throw new Error('Please provide a user')
   return {

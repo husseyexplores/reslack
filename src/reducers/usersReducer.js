@@ -4,6 +4,7 @@ import {
   USER_ONLINE,
   USER_OFFLINE,
   ADD_USER,
+  UPDATE_USER,
   REMOVE_USER,
   RESET_USERS,
 } from '../actions/types'
@@ -11,12 +12,14 @@ import {
 const initialState = {
   onlineUsersMap: {},
   allUsersList: [],
+  allUsersMap: {},
 }
 
 function addUserToListReducer(state, { user }) {
   return {
     ...state,
     allUsersList: [...state.allUsersList, user],
+    allUsersMap: { ...state.allUsersMap, [user.uid]: user },
   }
 }
 
@@ -31,6 +34,7 @@ function removeUserFromListReducer(state, { user }) {
   return {
     ...state,
     allUsersList: state.allUsersList.filter(oldUsers => oldUsers.id !== userId),
+    allUsersMap: omit(state.allUsersMap, userId),
   }
 }
 
@@ -48,6 +52,16 @@ function setUserOfflineReducer(state, { userId }) {
   }
 }
 
+function updateUserReducer(state, { user }) {
+  return {
+    ...state,
+    allUsersList: state.allUsersList.map(_user =>
+      _user.uid === user.uid ? user : _user
+    ),
+    allUsersMap: { ...state.allUsersMap, [user.uid]: user },
+  }
+}
+
 function resetUsersReducer() {
   return initialState
 }
@@ -56,6 +70,7 @@ export default createReducer(initialState, {
   [USER_ONLINE]: setUserOnlineReducer,
   [USER_OFFLINE]: setUserOfflineReducer,
   [ADD_USER]: addUserToListReducer,
+  [UPDATE_USER]: updateUserReducer,
   [REMOVE_USER]: removeUserFromListReducer,
   [RESET_USERS]: resetUsersReducer,
 })

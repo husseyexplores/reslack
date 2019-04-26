@@ -14,17 +14,16 @@ function isImage(message) {
 }
 
 // Component
-function MessageItem({ message, currentUser }) {
-  const { user: createdBy } = message
+function MessageItem({ message, currentUser, sender }) {
   function isOwnUser() {
-    return createdBy.uid === currentUser.uid
+    return sender.uid === currentUser.uid
   }
 
   return (
     <Comment>
-      <Comment.Avatar src={createdBy.avatar} />
+      <Comment.Avatar src={sender.avatar} />
       <Comment.Content className={isOwnUser() ? 'message__self' : ''}>
-        <Comment.Author as="a">{createdBy.username}</Comment.Author>
+        <Comment.Author as="a">{sender.displayName}</Comment.Author>
         <Comment.Metadata>{timeFromNow(message.createdAt)}</Comment.Metadata>
 
         {isImage(message) ? (
@@ -40,6 +39,7 @@ function MessageItem({ message, currentUser }) {
 MessageItem.propTypes = {
   message: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
+  sender: PropTypes.object.isRequired,
 }
 
 export default MessageItem

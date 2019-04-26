@@ -1,5 +1,4 @@
-import _toArray from 'lodash/toArray'
-import _keyBy from 'lodash/keyBy'
+import { toArray, keyBy, omit } from 'lodash'
 import { createReducer } from '../utils/'
 import {
   SET_CHANNEL,
@@ -16,19 +15,11 @@ const initialState = {
 }
 
 function setChannelReducer(state, { channel }) {
-  // stop the function if the current channel is already in state
-  if (state.channelsMap[channel.id]) return state
-
-  const channelsMap = { ...state.channelsMap, [channel.id]: channel }
-  return {
-    currentChannel: channel,
-    channelsList: _toArray(channelsMap),
-    channelsMap,
-  }
+  return { ...state, currentChannel: channel }
 }
 
 function setChannelsReducer(state, { channels }) {
-  const channelsMap = _keyBy(channels, 'id')
+  const channelsMap = keyBy(channels, 'id')
   return {
     ...state,
     channelsList: channels,
@@ -40,18 +31,17 @@ function updateChannelReducer(state, { channel }) {
   const channelsMap = { ...state.channelsMap, [channel.id]: channel }
   return {
     currentChannel: channel,
-    channelsList: _toArray(channelsMap),
+    channelsList: toArray(channelsMap),
     channelsMap,
   }
 }
 
 function clearChannelReducer(state, payload) {
-  const channelsMap = { ...state.channelsMap }
-  delete channelsMap[payload.channel.id]
+  const channelsMap = omit(state.channelsMap, payload.channel.id)
 
   return {
     currentChannel: null,
-    channelsList: _toArray(channelsMap),
+    channelsList: toArray(channelsMap),
     channelsMap,
   }
 }

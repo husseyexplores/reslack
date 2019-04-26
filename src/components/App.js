@@ -15,6 +15,7 @@ import ModalManager from './Modals/ModalManager'
 
 function mapState(state) {
   return {
+    currentChannel: state.channels.currentChannel,
     currentUser: state.auth.currentUser || {},
     authenticated: state.auth.authenticated,
     messagesLoaded: state.status.messagesLoaded,

@@ -12,3 +12,11 @@ window.db = firebase.database()
 export const db = firebase.database()
 export const auth = firebase.auth()
 export const storage = firebase.storage()
+
+// Refs
+export const usersRef = db.ref('users')
+export const channelsRef = db.ref('channels')
+export const messagesRef = db.ref('messages')
+// pms = privateMessagesSubscriptions
+export const pmsRef = db.ref('/pms')
+export const pmRef = db.ref('/pm')

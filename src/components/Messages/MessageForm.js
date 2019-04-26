@@ -2,16 +2,25 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Form, Segment, Button, Input } from 'semantic-ui-react'
 
-import { createTextMessage } from '../../utils'
+import { createTextMessage, getChannelId } from '../../utils'
 import { openModal } from '../../actions'
+import { db } from '../../firebase'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // Component
-function MessageForm({ currentChannel, currentUser, dispatch }) {
+function MessageForm({
+  currentChannelId,
+  currentChannel,
+  currentUser,
+  dispatch,
+  isPrivateChannel,
+}) {
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState([])
+
+  getChannelId(isPrivateChannel, currentUser, currentChannel)
 
   async function handleSendMessage(e) {
     e.preventDefault()
@@ -21,7 +30,12 @@ function MessageForm({ currentChannel, currentUser, dispatch }) {
     try {
       setErrors([])
       setLoading(true)
-      await createTextMessage(_message, currentChannel.id, currentUser)
+      await createTextMessage({
+        message: _message,
+        channelId: currentChannelId,
+        user: currentUser,
+        isPrivateChannel,
+      })
       setMessage('')
       setLoading(false)
     } catch (e) {
@@ -30,6 +44,19 @@ function MessageForm({ currentChannel, currentUser, dispatch }) {
       console.log('Error sending message', e) // eslint-disable-line no-console
     }
   }
+
+  /*
+    - pm
+      - user1_uid_user2_uid
+        - msg1_id: {msgObject}
+        - msg2_id: {msgObject}
+        - msg3_id: {msgObject}
+    - pms
+      - user1_uid
+          user1_uid_user2_uid: true
+      - user2_uid
+          user1_uid_user2_uid: true
+  */
 
   return (
     <Segment className="message__form">
@@ -73,9 +100,11 @@ function MessageForm({ currentChannel, currentUser, dispatch }) {
 }
 
 MessageForm.propTypes = {
+  currentChannelId: PropTypes.string.isRequired,
   currentChannel: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
+  isPrivateChannel: PropTypes.bool.isRequired,
 }
 
 export default MessageForm

@@ -4,6 +4,7 @@ export {
   getFocusedElement,
   isValidEmail,
   createReducer,
+  getChannelId,
 } from './helpers'
 
 export {

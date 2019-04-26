@@ -1,4 +1,4 @@
-import firebase from '../firebase'
+import firebase, { usersRef, channelsRef, messagesRef, pmRef, pmsRef } from '../firebase'
 import store from '../store'
 // import {
 //   asyncActionStart,
@@ -7,13 +7,6 @@ import store from '../store'
 // } from '../actions'
 
 //////////////////////////////////////////////////////////////////////////////////////
-
-// const dispatch = store && store.dispatch
-
-const db = firebase.database()
-const usersRef = db.ref('users')
-const channelsRef = db.ref('channels')
-const messagesRef = db.ref('messages')
 
 /**
  *
@@ -66,6 +59,7 @@ export async function createNewChannel(channelName, channelDescription) {
 }
 
 /**
+ * Create a public channel message in firebase rtdb
  *
  * @param {string} message - Message to create
  * @param {string} channelId - Channel ID
@@ -74,11 +68,12 @@ export async function createNewChannel(channelName, channelDescription) {
  * @param {string} user.username - User's username
  * @param {string} user.avatar - User's avatar
  */
-export async function createTextMessage(
+export async function createTextMessage({
   message,
   channelId,
-  user = store.getState().auth.currentUser
-) {
+  isPrivateChannel,
+  user = store.getState().auth.currentUser,
+}) {
   if (!message) throw new Error('Can not create an empty message.')
   if (!channelId)
     throw new Error('Please specify a channel ID in which to create the message.')
@@ -86,18 +81,26 @@ export async function createTextMessage(
   const newMessage = {
     content: message,
     createdAt: firebase.database.ServerValue.TIMESTAMP,
-    user: {
-      uid: user.uid,
-      username: user.username,
-      avatar: user.avatar,
-    },
+    senderId: user.uid,
   }
 
   try {
-    await messagesRef
-      .child(channelId)
-      .push()
-      .set(newMessage)
+    if (isPrivateChannel) {
+      pmRef
+        .child(channelId)
+        .push()
+        .set(newMessage)
+
+      await pmsRef
+        .child(user.uid)
+        .child(channelId)
+        .set(true)
+    } else {
+      await messagesRef
+        .child(channelId)
+        .push()
+        .set(newMessage)
+    }
   } catch (e) {
     throw new Error(e)
   }
@@ -124,11 +127,7 @@ export async function createImageMessage(
   const newMessage = {
     imageURL: imageURL,
     createdAt: firebase.database.ServerValue.TIMESTAMP,
-    user: {
-      uid: user.uid,
-      username: user.username,
-      avatar: user.avatar,
-    },
+    senderId: user.uid,
   }
 
   try {
