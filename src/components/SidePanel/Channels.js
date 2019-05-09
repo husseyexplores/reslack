@@ -7,20 +7,6 @@ import { openModal, setCurrentChannel } from '../../actions'
 
 /////////////////////////////////////////////////////////////////////////////////
 
-function mapState(state) {
-  return {
-    currentChannel: state.channels.currentChannel,
-    channelsList: state.channels.channelsList,
-    channelsLoaded: state.status.channelsLoaded,
-  }
-}
-
-const mapDispatch = {
-  setCurrentChannel,
-  openModal,
-}
-
-// Component
 function Channels({
   currentChannel,
   setCurrentChannel,
@@ -81,6 +67,19 @@ Channels.defaultProps = {
   currentChannel: null,
   channelsList: [],
   channelsLoaded: true,
+}
+
+function mapState(state) {
+  return {
+    currentChannel: state.channels.currentChannel,
+    channelsList: state.channels.channelsList,
+    channelsLoaded: state.status.channelsLoaded,
+  }
+}
+
+const mapDispatch = {
+  setCurrentChannel,
+  openModal,
 }
 
 export default connect(

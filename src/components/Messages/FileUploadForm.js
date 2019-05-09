@@ -10,11 +10,6 @@ import { createImageMessage } from '../../utils'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-function isAuthorized(file, allowedTypes) {
-  return allowedTypes.includes(file.type)
-}
-
-// Component
 function FileUploadForm({ closeModal, channelId, setPreventModalClose }) {
   const [file, setFile] = useState(null)
   const [loading, setLoading] = useState(false)
@@ -106,6 +101,10 @@ FileUploadForm.propTypes = {
   closeModal: PropTypes.func.isRequired,
   channelId: PropTypes.string.isRequired,
   setPreventModalClose: PropTypes.func.isRequired,
+}
+
+function isAuthorized(file, allowedTypes) {
+  return allowedTypes.includes(file.type)
 }
 
 export default FileUploadForm

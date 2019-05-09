@@ -5,15 +5,6 @@ import distanceInWordsToNow from 'date-fns/distance_in_words_to_now'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-function timeFromNow(date) {
-  return distanceInWordsToNow(date) + ' ago'
-}
-
-function isImage(message) {
-  return message.hasOwnProperty('imageURL') && !message.hasOwnProperty('content')
-}
-
-// Component
 function MessageItem({ message, currentUser, sender }) {
   function isOwnUser() {
     return sender.uid === currentUser.uid
@@ -40,6 +31,14 @@ MessageItem.propTypes = {
   message: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
   sender: PropTypes.object.isRequired,
+}
+
+function timeFromNow(date) {
+  return distanceInWordsToNow(date) + ' ago'
+}
+
+function isImage(message) {
+  return message.hasOwnProperty('imageURL') && !message.hasOwnProperty('content')
 }
 
 export default MessageItem

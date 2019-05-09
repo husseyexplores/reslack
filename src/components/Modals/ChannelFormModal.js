@@ -9,10 +9,6 @@ import { closeModal } from '../../actions'
 
 ///////////////////////////////////////////////////////////////////////////////
 
-const mapDispatch = {
-  closeModal,
-}
-
 function ChannelFormModal({ closeModal, ...restProps }) {
   return (
     <Modal
@@ -34,6 +30,10 @@ function ChannelFormModal({ closeModal, ...restProps }) {
 
 ChannelFormModal.propTypes = {
   closeModal: PropTypes.func.isRequired,
+}
+
+const mapDispatch = {
+  closeModal,
 }
 
 export default connect(

@@ -7,16 +7,6 @@ import { setCurrentChannel } from '../../actions'
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-function mapState(state) {
-  return {
-    allUsersList: state.users.allUsersList,
-    onlineUsersMap: state.users.onlineUsersMap,
-    currentUser: state.auth.currentUser,
-  }
-}
-
-const mapDispatch = { setCurrentChannel }
-
 // Component
 function DirectMessages({
   currentUser,
@@ -70,6 +60,16 @@ DirectMessages.defaultProps = {
   allUsersList: [],
   onlineUsersMap: {},
 }
+
+function mapState(state) {
+  return {
+    allUsersList: state.users.allUsersList,
+    onlineUsersMap: state.users.onlineUsersMap,
+    currentUser: state.auth.currentUser,
+  }
+}
+
+const mapDispatch = { setCurrentChannel }
 
 export default connect(
   mapState,

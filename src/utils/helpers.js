@@ -1,5 +1,4 @@
 import { sortBy } from 'lodash'
-import { throws } from 'assert'
 
 export function createReducer(initialState, fnMap) {
   return (state = initialState, { type, payload = {} }) => {

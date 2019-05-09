@@ -4,12 +4,6 @@ import { Segment, Header, Input, Icon } from 'semantic-ui-react'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-function displayUserCount(usersCount) {
-  const isSingular = usersCount === 1
-  return `${usersCount} User${isSingular ? '' : 's'}`
-}
-
-// Component
 function MessageHeader({
   channelName,
   setSearchTerm,
@@ -58,6 +52,11 @@ MessageHeader.defaultProps = {
   setSearchTerm: () => {},
   searchTerm: '',
   usersCount: 0,
+}
+
+function displayUserCount(usersCount) {
+  const isSingular = usersCount === 1
+  return `${usersCount} User${isSingular ? '' : 's'}`
 }
 
 export default MessageHeader

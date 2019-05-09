@@ -4,11 +4,9 @@ import { Form, Segment, Button, Input } from 'semantic-ui-react'
 
 import { createTextMessage, getChannelId } from '../../utils'
 import { openModal } from '../../actions'
-import { db } from '../../firebase'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-// Component
 function MessageForm({
   currentChannelId,
   currentChannel,
@@ -41,7 +39,7 @@ function MessageForm({
     } catch (e) {
       setLoading(false)
       setErrors([...errors, e.message])
-      console.log('Error sending message', e) // eslint-disable-line no-console
+      console.log('Error sending message', e)
     }
   }
 

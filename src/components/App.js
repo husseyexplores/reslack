@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { Grid, Loader, Dimmer } from 'semantic-ui-react'
 import { connect } from 'react-redux'
@@ -13,57 +13,36 @@ import ModalManager from './Modals/ModalManager'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-function mapState(state) {
-  return {
-    currentChannel: state.channels.currentChannel,
-    currentUser: state.auth.currentUser || {},
-    authenticated: state.auth.authenticated,
-    messagesLoaded: state.status.messagesLoaded,
-    channelsList: state.channels.channelsList,
-    channelsLoaded: state.status.channelsLoaded,
-    authLoaded: !!state.auth.currentUser && !!state.auth.authenticated,
-  }
-}
+function App({ currentUser, dispatch, messagesLoaded, authLoaded }) {
+  useEffect(() => {
+    return setupFirebaseListeners()
+  }, [])
 
-// Component
-class App extends Component {
-  componentDidMount() {
-    this.unsubscribeFirebaseListeners = setupFirebaseListeners()
-  }
-
-  componentWillUnmount() {
-    this.unsubscribeFirebaseListeners()
-  }
-
-  render() {
-    const { currentUser, dispatch, messagesLoaded, authLoaded } = this.props
-
-    if (!authLoaded) {
-      return (
-        <Dimmer active inverted>
-          <Loader size="large">Loading settings...</Loader>
-        </Dimmer>
-      )
-    }
-
+  if (!authLoaded) {
     return (
-      <>
-        <ModalManager />
-
-        <Grid columns="equal" className="app" style={{ background: '#eee' }}>
-          <ColorPanel />
-          <SidePanel currentUser={currentUser} dispatch={dispatch} />
-          <Grid.Column style={{ marginLeft: 320 }}>
-            {messagesLoaded ? <Messages /> : <Loader active />}
-          </Grid.Column>
-
-          <Grid.Column width={4}>
-            <MetaPanel />
-          </Grid.Column>
-        </Grid>
-      </>
+      <Dimmer active inverted>
+        <Loader size="large">Loading settings...</Loader>
+      </Dimmer>
     )
   }
+
+  return (
+    <>
+      <ModalManager />
+
+      <Grid columns="equal" className="app" style={{ background: '#eee' }}>
+        <ColorPanel />
+        <SidePanel currentUser={currentUser} dispatch={dispatch} />
+        <Grid.Column style={{ marginLeft: 320 }}>
+          {messagesLoaded ? <Messages /> : <Loader active />}
+        </Grid.Column>
+
+        <Grid.Column width={4}>
+          <MetaPanel />
+        </Grid.Column>
+      </Grid>
+    </>
+  )
 }
 
 App.propTypes = {
@@ -80,6 +59,18 @@ App.defaultProps = {
   authenticated: false,
   messagesLoaded: false,
   channelsLoaded: false,
+}
+
+function mapState(state) {
+  return {
+    currentChannel: state.channels.currentChannel,
+    currentUser: state.auth.currentUser || {},
+    authenticated: state.auth.authenticated,
+    messagesLoaded: state.status.messagesLoaded,
+    channelsList: state.channels.channelsList,
+    channelsLoaded: state.status.channelsLoaded,
+    authLoaded: !!state.auth.currentUser && !!state.auth.authenticated,
+  }
 }
 
 export default connect(mapState)(App)

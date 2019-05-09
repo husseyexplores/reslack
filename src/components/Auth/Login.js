@@ -9,55 +9,6 @@ import { isValidEmail, renderFormikErrors } from '../../utils/'
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
-const initialValues = {
-  email: '',
-  password: '',
-}
-
-function validateForm(values) {
-  const errors = {}
-
-  if (!isValidEmail(values.email)) {
-    errors.email = 'Invalid email address'
-  }
-
-  if (values.password.length < 6) {
-    errors.password = 'Password should contain at least 6 characters'
-  }
-
-  return errors
-}
-
-async function handleFormSubmit(
-  { email, password },
-  { setSubmitting, setErrors, setTouched }
-) {
-  try {
-    await firebase.auth().signInWithEmailAndPassword(email, password)
-
-    setSubmitting(false)
-  } catch (err) {
-    setSubmitting(false)
-
-    // Get the errored field name from the error message
-    let errorFieldName = err.message.match(/email|password/gi)
-    if (errorFieldName && errorFieldName.length) {
-      errorFieldName = errorFieldName[0]
-      // focus the errored field
-      const element = document.querySelector(`input[name="${errorFieldName}"]`)
-      element && element.focus()
-    } else {
-      errorFieldName = 'serverError'
-    }
-
-    // Set the formik error messages
-    setTouched({ [errorFieldName]: true })
-    setErrors({ [errorFieldName]: err.message })
-    console.log('Error submitting the Login Form.') // eslint-disable-line no-console
-    console.log(err) // eslint-disable-line no-console
-  }
-}
-
 function Login() {
   return (
     <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -138,8 +89,54 @@ function Login() {
   )
 }
 
-Login.propTypes = {}
+const initialValues = {
+  email: '',
+  password: '',
+}
 
-Login.defaultProps = {}
+function validateForm(values) {
+  const errors = {}
+
+  if (!isValidEmail(values.email)) {
+    errors.email = 'Invalid email address'
+  }
+
+  if (values.password.length < 6) {
+    errors.password = 'Password should contain at least 6 characters'
+  }
+
+  return errors
+}
+
+// Submit form handler
+async function handleFormSubmit(
+  { email, password },
+  { setSubmitting, setErrors, setTouched }
+) {
+  try {
+    await firebase.auth().signInWithEmailAndPassword(email, password)
+
+    setSubmitting(false)
+  } catch (err) {
+    setSubmitting(false)
+
+    // Get the errored field name from the error message
+    let errorFieldName = err.message.match(/email|password/gi)
+    if (errorFieldName && errorFieldName.length) {
+      errorFieldName = errorFieldName[0]
+      // focus the errored field
+      const element = document.querySelector(`input[name="${errorFieldName}"]`)
+      element && element.focus()
+    } else {
+      errorFieldName = 'serverError'
+    }
+
+    // Set the formik error messages
+    setTouched({ [errorFieldName]: true })
+    setErrors({ [errorFieldName]: err.message })
+    console.log('Error submitting the Login Form.') // eslint-disable-line no-console
+    console.log(err) // eslint-disable-line no-console
+  }
+}
 
 export default Login

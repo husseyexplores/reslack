@@ -9,10 +9,6 @@ import { closeModal } from '../../actions'
 
 ///////////////////////////////////////////////////////////////////////////////
 
-const mapDispatch = {
-  closeModal,
-}
-
 function FileUploadModal({ closeModal, ...restProps }) {
   const [preventModalClose, setPreventModalClose] = useState(false)
 
@@ -42,6 +38,10 @@ function FileUploadModal({ closeModal, ...restProps }) {
 
 FileUploadModal.propTypes = {
   closeModal: PropTypes.func.isRequired,
+}
+
+const mapDispatch = {
+  closeModal,
 }
 
 export default connect(

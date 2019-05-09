@@ -12,12 +12,6 @@ const modalMap = {
   FileUploadModal,
 }
 
-function mapState(state) {
-  return {
-    currentModal: state.modals,
-  }
-}
-
 // Component
 function ModalManager({ currentModal }) {
   if (!currentModal) return null
@@ -30,6 +24,12 @@ function ModalManager({ currentModal }) {
 
 ModalManager.propTypes = {
   currentModal: PropTypes.object,
+}
+
+function mapState(state) {
+  return {
+    currentModal: state.modals,
+  }
 }
 
 export default connect(mapState)(ModalManager)

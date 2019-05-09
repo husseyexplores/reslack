@@ -10,62 +10,6 @@ import MessageItem from './MessageItem'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-function noMessagesFound(handleClearQuery) {
-  return (
-    <Segment placeholder basic>
-      <Header icon>
-        <Icon name="search" />
-        {`No messages found.`}
-      </Header>
-      <Segment.Inline>
-        <Button size="small" onClick={handleClearQuery}>
-          Clear Query
-        </Button>
-      </Segment.Inline>
-    </Segment>
-  )
-}
-
-function noMessagesYet() {
-  return (
-    <Segment placeholder basic textAlign="center">
-      <Header>{`No messages found.`}</Header>
-    </Segment>
-  )
-}
-
-function filterMessages(searchTerm, messageArr) {
-  if (!searchTerm || !searchTerm.length > 0) return messageArr
-
-  const regex = new RegExp(searchTerm, 'gi')
-  return messageArr.reduce((filteredMessages, message) => {
-    if (
-      (message.content && message.content.match(regex)) ||
-      (message.user.username && message.user.username.match(regex))
-    ) {
-      filteredMessages.push(message)
-    }
-    return filteredMessages
-  }, [])
-}
-
-function getChannelName(channel, isPrivateChannel) {
-  return isPrivateChannel ? `#${channel.displayName}` : `#${channel.name}`
-}
-
-function renderMessages(messages, currentUser, allUsersMap) {
-  if (!messages || messages.length === 0) return null
-  return messages.map(msg => (
-    <MessageItem
-      message={msg}
-      sender={allUsersMap[msg.senderId]}
-      currentUser={currentUser}
-      key={msg.id}
-    />
-  ))
-}
-
-// Component
 function Messages({
   currentChannelId,
   currentChannel,
@@ -145,6 +89,61 @@ Messages.defaultProps = {
   messages: [],
   currentChannel: null,
   currentUser: null,
+}
+
+function noMessagesFound(handleClearQuery) {
+  return (
+    <Segment placeholder basic>
+      <Header icon>
+        <Icon name="search" />
+        {`No messages found.`}
+      </Header>
+      <Segment.Inline>
+        <Button size="small" onClick={handleClearQuery}>
+          Clear Query
+        </Button>
+      </Segment.Inline>
+    </Segment>
+  )
+}
+
+function noMessagesYet() {
+  return (
+    <Segment placeholder basic textAlign="center">
+      <Header>{`No messages found.`}</Header>
+    </Segment>
+  )
+}
+
+function filterMessages(searchTerm, messageArr) {
+  if (!searchTerm || !searchTerm.length > 0) return messageArr
+
+  const regex = new RegExp(searchTerm, 'gi')
+  return messageArr.reduce((filteredMessages, message) => {
+    if (
+      (message.content && message.content.match(regex)) ||
+      (message.user.username && message.user.username.match(regex))
+    ) {
+      filteredMessages.push(message)
+    }
+    return filteredMessages
+  }, [])
+}
+
+function getChannelName(channel, isPrivateChannel) {
+  return isPrivateChannel ? `#${channel.displayName}` : `#${channel.name}`
+}
+
+function renderMessages(messages, currentUser, allUsersMap) {
+  if (!messages || messages.length === 0) return null
+  return messages.map(msg => (
+    <MessageItem
+      message={msg}
+      sender={allUsersMap[msg.senderId]}
+      currentUser={currentUser}
+      key={msg.id}
+    />
+  ))
 }
 
 function mapState(state) {
