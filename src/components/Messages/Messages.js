@@ -2,11 +2,13 @@ import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Segment, Comment, Header, Button, Icon, Ref } from 'semantic-ui-react'
+import isSameDay from 'date-fns/is_same_day'
 
 import { getChannelId } from '../../utils'
 import MessageHeader from './MessageHeader'
 import MessageForm from './MessageForm'
 import MessageItem from './MessageItem'
+import ChatScroller from './ChatScroller'
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,8 +19,8 @@ function Messages({
   messages,
   dispatch,
   allUsersMap,
+  isPrivateChannel,
 }) {
-  const isPrivateChannel = Boolean(currentChannel.uid)
   const messageContainerRef = useRef(null)
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -56,6 +58,7 @@ function Messages({
       <Segment>
         <Ref innerRef={messageContainerRef}>
           <Comment.Group className="messages">
+            <ChatScroller scrollerRef={messageContainerRef} />
             {searchTerm.length > 0 && filteredMessages.length === 0
               ? noMessagesFound(() => setSearchTerm(''))
               : filteredMessages.length === 0
@@ -83,6 +86,13 @@ Messages.propTypes = {
   dispatch: PropTypes.func.isRequired,
   messages: PropTypes.array.isRequired,
   allUsersMap: PropTypes.object.isRequired,
+  isPrivateChannel: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.shape({
+      senderUid: PropTypes.string.isRequired,
+      recipientUid: PropTypes.string.isRequired,
+    }),
+  ]).isRequired,
 }
 
 Messages.defaultProps = {
@@ -136,19 +146,53 @@ function getChannelName(channel, isPrivateChannel) {
 
 function renderMessages(messages, currentUser, allUsersMap) {
   if (!messages || messages.length === 0) return null
-  return messages.map(msg => (
-    <MessageItem
-      message={msg}
-      sender={allUsersMap[msg.senderId]}
-      currentUser={currentUser}
-      key={msg.id}
-    />
-  ))
+  return messages.map((msg, idx) => {
+    const prevMsg = messages[idx - 1]
+    const showDay = shouldShowDay(prevMsg, msg)
+    const showAvatar = shouldShowAvatar(prevMsg, msg)
+
+    return (
+      <MessageItem
+        key={msg.id}
+        message={msg}
+        sender={allUsersMap[msg.senderId]}
+        currentUser={currentUser}
+        showDay={showDay}
+        showAvatar={showAvatar}
+      />
+    )
+  })
+}
+
+function shouldShowDay(prevMsg, msg) {
+  const isFirstMsg = !prevMsg
+  if (isFirstMsg) return true
+
+  const isNewDay = !isSameDay(prevMsg.createdAt, msg.createdAt)
+  return isNewDay
+}
+
+function shouldShowAvatar(prevMsg, msg) {
+  const isFirstMsg = !prevMsg
+  if (isFirstMsg) return true
+
+  const isDifferentUser = prevMsg.senderId !== msg.senderId
+  if (isDifferentUser) return true
+
+  const hasBeenAWhile = msg.createdAt - prevMsg.createdAt > 180 * 1000 // more than 3 minutes
+  return hasBeenAWhile
 }
 
 function mapState(state) {
   const currentChannel = state.channels.currentChannel
-  const isPrivateChannel = Boolean(currentChannel.uid)
+  // uid will only exist if the channel is private
+  const isPrivateChannel = !currentChannel.uid
+    ? false
+    : {
+        senderUid: state.auth.currentUser.uid,
+        recipientUid: currentChannel.uid,
+      }
+
   const currentChannelId = getChannelId(
     isPrivateChannel,
     state.auth.currentUser,
@@ -164,6 +208,7 @@ function mapState(state) {
     currentChannel,
     allUsersMap: state.users.allUsersMap,
     currentChannelId,
+    isPrivateChannel,
   }
 }
 
