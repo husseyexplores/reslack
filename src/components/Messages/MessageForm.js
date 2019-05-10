@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { Form, Segment, Button, Input } from 'semantic-ui-react'
 
-import { createTextMessage, getChannelId } from '../../utils'
+import { createTextMessage } from '../../utils'
 import { openModal } from '../../actions'
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -17,8 +17,6 @@ function MessageForm({
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState([])
-
-  getChannelId(isPrivateChannel, currentUser, currentChannel)
 
   async function handleSendMessage(e) {
     e.preventDefault()
@@ -102,7 +100,13 @@ MessageForm.propTypes = {
   currentChannel: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
-  isPrivateChannel: PropTypes.bool.isRequired,
+  isPrivateChannel: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.shape({
+      senderUid: PropTypes.string.isRequired,
+      recipientUid: PropTypes.string.isRequired,
+    }),
+  ]).isRequired,
 }
 
 export default MessageForm

@@ -68,13 +68,10 @@ export async function createNewChannel(channelName, channelDescription) {
  * @param {string} user.username - User's username
  * @param {string} user.avatar - User's avatar
  */
-export async function createTextMessage({
-  message,
-  channelId,
-  isPrivateChannel,
-  user = store.getState().auth.currentUser,
-}) {
+const pmsCache = {}
+export async function createTextMessage({ message, channelId, isPrivateChannel, user }) {
   if (!message) throw new Error('Can not create an empty message.')
+  if (!user) throw new Error('Can not create a message without the sender info')
   if (!channelId)
     throw new Error('Please specify a channel ID in which to create the message.')
 
@@ -86,23 +83,30 @@ export async function createTextMessage({
 
   try {
     if (isPrivateChannel) {
+      const { senderUid, recipientUid } = isPrivateChannel
+
       pmRef
         .child(channelId)
         .push()
         .set(newMessage)
 
-      await pmsRef
-        .child(user.uid)
-        .child(channelId)
-        .set(true)
+      if (!pmsCache[senderUid]) {
+        pmsCache[senderUid] = true
+        pmsRef.child(`${senderUid}/${channelId}`).set(true)
+      }
+
+      if (!pmsCache[recipientUid]) {
+        pmsCache[recipientUid] = true
+        pmsRef.child(`${recipientUid}/${channelId}`).set(true)
+      }
     } else {
-      await messagesRef
+      messagesRef
         .child(channelId)
         .push()
         .set(newMessage)
     }
   } catch (e) {
-    throw new Error(e)
+    throw e
   }
 }
 

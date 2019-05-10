@@ -28,6 +28,14 @@ body,
   padding-left: 8px;
 }
 
+.adjacent-msg.comment {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+.adjacent-msg.comment .message__self {
+  border-left-color: transparent !important;
+}
+
 .message__image {
   padding: 1em;
 }

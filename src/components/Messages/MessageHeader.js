@@ -44,7 +44,13 @@ MessageHeader.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   setSearchTerm: PropTypes.func.isRequired,
   usersCount: PropTypes.number.isRequired,
-  isPrivateChannel: PropTypes.bool.isRequired,
+  isPrivateChannel: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.shape({
+      senderUid: PropTypes.string.isRequired,
+      recipientUid: PropTypes.string.isRequired,
+    }),
+  ]).isRequired,
 }
 
 MessageHeader.defaultProps = {

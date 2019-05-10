@@ -184,7 +184,7 @@ function setupFirebaseListeners() {
   return function removeFirebaseListeners() {
     cleanupListeners()
     console.log(
-      '%cUnsubscribed to Firebase Database!',
+      '%cUnsubscribed from Firebase Database!',
       'padding: 4px 8px; background: orangered;'
     )
   }
