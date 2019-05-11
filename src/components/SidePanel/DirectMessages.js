@@ -13,6 +13,7 @@ function DirectMessages({
   allUsersList,
   onlineUsersMap,
   setCurrentChannel,
+  currentChannel,
 }) {
   function isOnline(userId) {
     return Boolean(onlineUsersMap[userId])
@@ -27,6 +28,7 @@ function DirectMessages({
         key={_user.uid}
         style={{ opacity: 0.7 }}
         onClick={() => (_user.uid !== currentUser.uid ? setCurrentChannel(_user) : null)}
+        active={currentChannel && currentChannel.uid === _user.uid}
       >
         <Icon name="circle" color={isOnline(_user.uid) ? 'green' : 'grey'} />
         {'@ ' + _user.displayName}
@@ -54,6 +56,7 @@ DirectMessages.propTypes = {
   allUsersList: PropTypes.array.isRequired,
   onlineUsersMap: PropTypes.object.isRequired,
   setCurrentChannel: PropTypes.func.isRequired,
+  currentChannel: PropTypes.object,
 }
 
 DirectMessages.defaultProps = {
@@ -63,6 +66,7 @@ DirectMessages.defaultProps = {
 
 function mapState(state) {
   return {
+    currentChannel: state.channels.currentChannel,
     allUsersList: state.users.allUsersList,
     onlineUsersMap: state.users.onlineUsersMap,
     currentUser: state.auth.currentUser,
