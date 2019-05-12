@@ -1,7 +1,8 @@
 import map from 'lodash/map'
-import { db } from './firebase'
+import firebase, { db } from './firebase'
 import store from './store'
 import {
+  setUser,
   setChannels,
   setCurrentChannel,
   addMessage,
@@ -103,6 +104,22 @@ function subscribeToUsers() {
     db.ref(path).on('child_changed', snap => {
       const user = { uid: snap.key, ...snap.val() }
       dispatch(updateAvailableUser(user))
+
+      // sync display name
+      // NOTE: Should be moved to cloud functions
+      firebase
+        .auth()
+        .currentUser.updateProfile({
+          displayName: user.displayName,
+        })
+        .then(function() {
+          console.log('User profile synced.')
+          dispatch(setUser(firebase.auth().currentUser))
+        })
+        .catch(function(error) {
+          console.log('Error syncing User profile')
+          console.error(error)
+        })
     })
   }
 }
