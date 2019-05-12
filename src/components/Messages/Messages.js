@@ -132,7 +132,7 @@ function filterMessages(searchTerm, messageArr) {
   return messageArr.reduce((filteredMessages, message) => {
     if (
       (message.content && message.content.match(regex)) ||
-      (message.user.username && message.user.username.match(regex))
+      (message.user.displayName && message.user.displayName.match(regex))
     ) {
       filteredMessages.push(message)
     }

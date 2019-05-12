@@ -50,15 +50,15 @@ function Register() {
                   <Form.Input
                     autoFocus
                     fluid
-                    name="username"
-                    value={values.username}
+                    name="displayName"
+                    value={values.displayName}
                     icon="user"
                     iconPosition="left"
                     placeholder="Username"
                     onChange={handleChange}
                     onBlur={handleBlur}
                     type="text"
-                    error={errors.username && touched.username}
+                    error={errors.displayName && touched.displayName}
                   />
 
                   <Form.Input
@@ -126,7 +126,7 @@ function Register() {
 }
 
 const initialValues = {
-  username: '',
+  displayName: '',
   email: '',
   password: '',
   passwordConfirmation: '',
@@ -162,12 +162,12 @@ function renderErrors(errors, touched) {
 function validateForm(values) {
   const errors = {}
 
-  if (!values.username) {
-    errors.username = 'Required'
+  if (!values.displayName) {
+    errors.displayName = 'Required'
   }
 
-  if (values.username.length < 3) {
-    errors.username = 'Username should contain at least 3 characters'
+  if (values.displayName.length < 3) {
+    errors.displayName = 'Username should contain at least 3 characters'
   }
 
   if (!isValidEmail(values.email)) {
@@ -186,7 +186,7 @@ function validateForm(values) {
 }
 
 async function handleFormSubmit(
-  { email, password, username },
+  { email, password, displayName },
   { setSubmitting, setErrors, setTouched }
 ) {
   try {
@@ -195,7 +195,7 @@ async function handleFormSubmit(
       .createUserWithEmailAndPassword(email, password)
 
     await createdUser.user.updateProfile({
-      displayName: username,
+      displayName,
       photoURL: `http://gravatar.com/avatar/${md5(email)}?d=identicon`,
     })
 

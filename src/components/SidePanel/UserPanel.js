@@ -21,7 +21,7 @@ function UserPanel({ currentUser, dispatch }) {
       key: 'signedInAs',
       value: (
         <span>
-          <Icon name="user" /> Signed in as <strong>{currentUser.username}</strong>
+          <Icon name="user" /> Signed in as <strong>{currentUser.displayName}</strong>
         </span>
       ),
       disabled: true,
@@ -46,8 +46,8 @@ function UserPanel({ currentUser, dispatch }) {
           <Dropdown
             trigger={
               <span>
-                <Image src={currentUser.avatar} spaced="right" avatar />
-                {currentUser.username}
+                <Image src={currentUser.photoURL} spaced="right" avatar />
+                {currentUser.displayName}
               </span>
             }
             style={{ color: '#fff' }}

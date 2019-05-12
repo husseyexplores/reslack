@@ -113,7 +113,6 @@ function subscribeToUsers() {
           displayName: user.displayName,
         })
         .then(function() {
-          console.log('User profile synced.')
           dispatch(setUser(firebase.auth().currentUser))
         })
         .catch(function(error) {
