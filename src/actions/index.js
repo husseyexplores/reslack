@@ -1,4 +1,4 @@
-import firebase from '../firebase'
+import firebase, { db } from '../firebase'
 import * as actionTypes from './types'
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,10 @@ export function logoutUser({ onSuccess = () => {}, onError = () => {} } = {}) {
         .database()
         .ref('/presence')
         .child(signedInUserId)
-        .remove()
+        .set({
+          state: 'offline',
+          lastChanged: firebase.database.ServerValue.TIMESTAMP,
+        })
     } catch (error) {
       console.log('Error singing in.') // eslint-disable-line
       dispatch(asyncActionError(error.message))
@@ -225,6 +228,22 @@ export function closeModal() {
  * @param {Object} channel
  */
 export function setCurrentChannel(channel) {
+  return async (dispatch, getState) => {
+    db.ref('users_current_channel')
+      .child(getState().auth.currentUser.uid)
+      .set({
+        channelId: channel.id ? channel.id : channel.uid,
+        isPrivate: channel.uid ? true : false,
+      })
+    return dispatch(setCurrentChannelAC(channel))
+  }
+}
+
+/**
+ *
+ * @param {Object} channel
+ */
+export function setCurrentChannelAC(channel) {
   return {
     type: actionTypes.SET_CHANNEL,
     payload: {

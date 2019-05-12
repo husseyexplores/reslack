@@ -139,11 +139,20 @@ function updateOnlinePresence() {
       if (snap.val() === true) {
         dispatch(addOnlineUser(currentUser.uid))
         const ref = presenceRef.child(currentUser.uid)
-        ref.set(true)
-        ref.onDisconnect().remove()
+        ref.set({
+          state: 'online',
+          lastChanged: firebase.database.ServerValue.TIMESTAMP,
+        })
+        ref.onDisconnect().set({
+          state: 'offline',
+          lastChanged: firebase.database.ServerValue.TIMESTAMP,
+        })
       } else {
         dispatch(removeOnlineUser(currentUser.uid))
-        presenceRef.child(currentUser.uid).remove()
+        presenceRef.child(currentUser.uid).set({
+          state: 'offline',
+          lastChanged: firebase.database.ServerValue.TIMESTAMP,
+        })
       }
     })
   }
@@ -157,8 +166,20 @@ function subscribeToOnlineUsers() {
     const presenceRef = db.ref(path)
 
     presenceRef.on('child_added', snap => {
-      const userId = snap.key
-      dispatch(addOnlineUser(userId))
+      if (snap.val().state === 'online') {
+        const userId = snap.key
+        dispatch(addOnlineUser(userId))
+      }
+    })
+
+    presenceRef.on('child_changed', snap => {
+      if (snap.val().state === 'offline') {
+        const userId = snap.key
+        dispatch(removeOnlineUser(userId))
+      } else if (snap.val().state === 'online') {
+        const userId = snap.key
+        dispatch(addOnlineUser(userId))
+      }
     })
 
     presenceRef.on('child_removed', snap => {
