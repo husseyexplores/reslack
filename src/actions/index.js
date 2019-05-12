@@ -15,8 +15,8 @@ export function setUser(user) {
   if (user) {
     _user.uid = user.uid
     _user.email = user.email
-    _user.avatar = user.photoURL
-    _user.username = user.displayName
+    _user.photoURL = user.photoURL
+    _user.displayName = user.displayName
   }
   const action = {
     type: actionTypes.SET_USER,

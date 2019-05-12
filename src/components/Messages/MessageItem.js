@@ -10,7 +10,7 @@ function MessageItem({ message, currentUser, sender, showDay, showAvatar }) {
 
   return (
     <Comment className={!showAvatar ? 'adjacent-msg' : ''}>
-      <Comment.Avatar src={showAvatar ? sender.avatar : null} />
+      <Comment.Avatar src={showAvatar ? sender.photoURL : null} />
       <Comment.Content className={isOwnMsg ? 'message__self' : ''}>
         {showAvatar && <Comment.Author as="a">{sender.displayName}</Comment.Author>}
         {showAvatar && (

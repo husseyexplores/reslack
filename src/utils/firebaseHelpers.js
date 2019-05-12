@@ -18,7 +18,7 @@ import store from '../store'
 export async function saveUserToDB(createdUser) {
   return await usersRef.child(createdUser.user.uid).set({
     displayName: createdUser.user.displayName,
-    avatar: createdUser.user.photoURL,
+    photoURL: createdUser.user.photoURL,
     createdAt: firebase.database.ServerValue.TIMESTAMP,
   })
 }
@@ -46,9 +46,9 @@ export async function createNewChannel(channelName, channelDescription) {
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       createdBy: {
         uid: currentUser.uid,
-        username: currentUser.username,
+        displayName: currentUser.displayName,
         email: currentUser.email,
-        avatar: currentUser.avatar,
+        photoURL: currentUser.photoURL,
       },
     }
 
@@ -65,8 +65,8 @@ export async function createNewChannel(channelName, channelDescription) {
  * @param {string} channelId - Channel ID
  * @param {Object} user - User object that created the channel
  * @param {string} user.uid - User's unique ID
- * @param {string} user.username - User's username
- * @param {string} user.avatar - User's avatar
+ * @param {string} user.displayName - User's displayName
+ * @param {string} user.photoURL - User's avatar
  */
 const pmsCache = {}
 export async function createTextMessage({ message, channelId, isPrivateChannel, user }) {
@@ -116,8 +116,8 @@ export async function createTextMessage({ message, channelId, isPrivateChannel, 
  * @param {string} channelId - Channel ID
  * @param {Object} user - User object that created the channel
  * @param {string} user.uid - User's unique ID
- * @param {string} user.username - User's username
- * @param {string} user.avatar - User's avatar
+ * @param {string} user.displayName - User's displayName
+ * @param {string} user.photoURL - User's avatar
  */
 export async function createImageMessage(
   imageURL,
