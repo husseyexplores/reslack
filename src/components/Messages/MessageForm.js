@@ -41,19 +41,6 @@ function MessageForm({
     }
   }
 
-  /*
-    - pm
-      - user1_uid_user2_uid
-        - msg1_id: {msgObject}
-        - msg2_id: {msgObject}
-        - msg3_id: {msgObject}
-    - pms
-      - user1_uid
-          user1_uid_user2_uid: true
-      - user2_uid
-          user1_uid_user2_uid: true
-  */
-
   return (
     <Segment className="message__form">
       <Form onSubmit={handleSendMessage}>

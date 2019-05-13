@@ -1,4 +1,10 @@
-import firebase, { usersRef, channelsRef, messagesRef, pmRef, pmsRef } from '../firebase'
+import firebase, {
+  usersRef,
+  channelsRef,
+  messagesRef,
+  privateMsgsRef,
+  privateMsgsSubscriptionsRef,
+} from '../firebase'
 import store from '../store'
 // import {
 //   asyncActionStart,
@@ -68,7 +74,8 @@ export async function createNewChannel(channelName, channelDescription) {
  * @param {string} user.displayName - User's displayName
  * @param {string} user.photoURL - User's avatar
  */
-const pmsCache = {}
+
+const privateMsgsSubscriptionsCache = {}
 export async function createTextMessage({ message, channelId, isPrivateChannel, user }) {
   if (!message) throw new Error('Can not create an empty message.')
   if (!user) throw new Error('Can not create a message without the sender info')
@@ -85,19 +92,19 @@ export async function createTextMessage({ message, channelId, isPrivateChannel, 
     if (isPrivateChannel) {
       const { senderUid, recipientUid } = isPrivateChannel
 
-      pmRef
+      privateMsgsRef
         .child(channelId)
         .push()
         .set(newMessage)
 
-      if (!pmsCache[senderUid]) {
-        pmsCache[senderUid] = true
-        pmsRef.child(`${senderUid}/${channelId}`).set(true)
+      if (!privateMsgsSubscriptionsCache[senderUid]) {
+        privateMsgsSubscriptionsCache[senderUid] = true
+        privateMsgsSubscriptionsRef.child(`${senderUid}/${channelId}`).set(true)
       }
 
-      if (!pmsCache[recipientUid]) {
-        pmsCache[recipientUid] = true
-        pmsRef.child(`${recipientUid}/${channelId}`).set(true)
+      if (!privateMsgsSubscriptionsCache[recipientUid]) {
+        privateMsgsSubscriptionsCache[recipientUid] = true
+        privateMsgsSubscriptionsRef.child(`${recipientUid}/${channelId}`).set(true)
       }
     } else {
       messagesRef

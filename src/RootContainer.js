@@ -17,8 +17,6 @@ import 'semantic-ui-css/semantic.min.css'
 
 ///////////////////////////////////////////////////////////////////////
 
-window.firebase = firebase
-
 function RootContainer({ history }) {
   const [isAuthReady, setIsAuthReady] = useState(false)
   const [currentUser, setCurrentUser] = useState(null)

@@ -63,13 +63,15 @@ function subscribeToChannelsAndMessages() {
 
 // PRIVATE CHANNELS
 function subscribeToPrivateChannelsAndMessages() {
-  const channelsPath = `/pms/${getState().auth.currentUser.uid}`
+  const channelsPath = `/private_messages_subscriptions/${
+    getState().auth.currentUser.uid
+  }`
   if (!refPaths[channelsPath]) {
     refPaths[channelsPath] = true
 
     db.ref(channelsPath).on('child_added', snap => {
       const pvtChannelId = snap.key
-      const privateMsgChannelPath = `/pm/${pvtChannelId}`
+      const privateMsgChannelPath = `/private_messages/${pvtChannelId}`
       if (!refPaths[privateMsgChannelPath]) {
         refPaths[privateMsgChannelPath] = true
         db.ref(privateMsgChannelPath).on('child_added', msgSnap => {
