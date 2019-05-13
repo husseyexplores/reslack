@@ -37,8 +37,6 @@ function RootContainer({ history }) {
         history.push('/login')
         setCurrentUser(null)
       }
-
-      console.log({ signedInUser }) // eslint-disable-line
     })
   }, [history])
 
