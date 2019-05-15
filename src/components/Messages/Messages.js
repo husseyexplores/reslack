@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 import { Segment, Comment, Header, Button, Icon, Ref } from 'semantic-ui-react'
 import isSameDay from 'date-fns/is_same_day'
 
-import { getChannelId } from '../../utils'
 import MessageHeader from './MessageHeader'
 import MessageForm from './MessageForm'
 import MessageItem from './MessageItem'
