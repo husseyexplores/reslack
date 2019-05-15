@@ -15,6 +15,7 @@ import {
   resetAllMessages,
   resetAllUsers,
   resetAsyncStatuses,
+  updateUnseenCount,
 } from './actions'
 
 const { getState, dispatch } = store
@@ -191,6 +192,34 @@ function subscribeToOnlineUsers() {
   }
 }
 
+// UNSEEN MSGS COUNT
+function subscribeToUnseenMsgsCount() {
+  const currentUserId = getState().auth.currentUser.uid
+
+  const path = `unseen_messages_count/${currentUserId}`
+  if (refPaths[path]) return
+
+  refPaths[path] = true
+  const unseenMsgCountRef = db.ref(path)
+
+  unseenMsgCountRef.on('child_added', snap => {
+    const channelId = snap.key
+    const unseenCount = snap.val()
+    dispatch(updateUnseenCount(channelId, unseenCount))
+  })
+
+  unseenMsgCountRef.on('child_changed', snap => {
+    const channelId = snap.key
+    const unseenCount = snap.val()
+    dispatch(updateUnseenCount(channelId, unseenCount))
+  })
+
+  unseenMsgCountRef.on('child_removed', snap => {
+    const channelId = snap.key
+    dispatch(updateUnseenCount(channelId, 0))
+  })
+}
+
 // CLEANUP LISTENERS
 function cleanupListeners() {
   const paths = Object.keys(refPaths)
@@ -214,6 +243,7 @@ function setupFirebaseListeners() {
   updateOnlinePresence()
   subscribeToChannelsAndMessages()
   subscribeToPrivateChannelsAndMessages()
+  subscribeToUnseenMsgsCount()
 
   console.log(
     '%cSubscribed to Firebase Database!',

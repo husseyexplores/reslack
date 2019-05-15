@@ -5,9 +5,12 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import firebase from '../firebase'
 
 import rootReducer from '../reducers'
+import resetUnseenMsgCount from './middlewares/resetUnseenMsgCount'
+
+/////////////////////////////////////////////////////////////////////////////////
 
 const configureStore = preloadedState => {
-  const middlewares = [thunk.withExtraArgument({ firebase })]
+  const middlewares = [thunk.withExtraArgument({ firebase }), resetUnseenMsgCount]
   const middlewareEnahcer = applyMiddleware(...middlewares)
 
   // const storeEnhancers = [middlewareEnahcer, reduxDevToolsInitializer]

@@ -51,6 +51,6 @@ export function getChannelId(isPrivateChannel, currentUser, currentChannel) {
   })
 
   return isPrivateChannel
-    ? sortBy([currentUser.uid, currentChannel.uid]).join('__')
+    ? sortBy([currentUser.uid, currentChannel.uid]).join('_|_')
     : currentChannel.id
 }

@@ -232,8 +232,8 @@ export function setCurrentChannel(channel) {
     db.ref('users_current_channel')
       .child(getState().auth.currentUser.uid)
       .set({
-        channelId: channel.id ? channel.id : channel.uid,
-        isPrivate: channel.uid ? true : false,
+        channelId: channel.id,
+        isPrivate: Boolean(channel.isPrivateChannel),
       })
     return dispatch(setCurrentChannelAC(channel))
   }
@@ -306,4 +306,16 @@ export function addMessage(channelId, message) {
 
 export function resetAllMessages() {
   return { type: actionTypes.RESET_MESSAGES }
+}
+
+/* UNSEEN COUNT ACTIONS */
+
+export function updateUnseenCount(channelId, unseenCount) {
+  return {
+    type: actionTypes.UPDATE_UNSEEN_MSG_COUNT,
+    payload: {
+      channelId,
+      unseenCount,
+    },
+  }
 }

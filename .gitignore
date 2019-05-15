@@ -36,3 +36,4 @@ _redirects
 /temp
 /src/features/temp
 /functions/node_modules
+firebase-debug.log

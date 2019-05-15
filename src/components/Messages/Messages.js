@@ -186,18 +186,10 @@ function shouldShowAvatar(prevMsg, msg) {
 function mapState(state) {
   const currentChannel = state.channels.currentChannel
   // uid will only exist if the channel is private
-  const isPrivateChannel = !currentChannel.uid
-    ? false
-    : {
-        senderUid: state.auth.currentUser.uid,
-        recipientUid: currentChannel.uid,
-      }
-
-  const currentChannelId = getChannelId(
-    isPrivateChannel,
-    state.auth.currentUser,
-    currentChannel
-  )
+  const isPrivateChannel = currentChannel.isPrivateChannel
+    ? currentChannel.isPrivateChannel
+    : false
+  const currentChannelId = currentChannel.id
 
   const currentChanelMessages = state.messages[currentChannelId]
 
